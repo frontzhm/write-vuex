@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     {{ $store.state.a }}
+    {{ $store.getters.a1 }}
     <button @click="$store.state.a++">
       增加
     </button>

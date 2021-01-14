@@ -57,6 +57,8 @@ export default {
 
 ![write-router6.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router6.png)
 
+github切换到`c1`分支
+
 ## 处理用户传的state
 
 store实例的`state`可以出现在视图里，值变化的时候，视图也一并更新。
@@ -88,4 +90,46 @@ github切换到`c2`分支
 
 ## 处理用户传的getters
 
-参数的getters是一个函数，但是实际使用中，则是一个属性，属性值是函数的返回值 。
+- 用户传的`getters`是一个函数集合
+- 但是实际使用中，属性值是函数的返回值
+- 属性依旧是劫持的，这边因为是函数，所以不能再投机取巧了
+
+```js
+// vuex.js
+constructor(options) {
+    this.options = options;
+    this.state = new Vue({ data: options.state });
+    if (options.getters) {
+      this.getters = {};
+      Object.keys(options.getters).forEach(key => {
+        //   这里必须是属性劫持
+        Object.defineProperty(this.getters, key, {
+          get: () => {
+            return options.getters[key](this.state);
+          }
+        });
+      });
+    }
+  }
+```
+
+```js
+// main.js
+state: { a: 1, b: 2 },
+getters: { a1(state) { return state.a + 1; } }
+```
+
+```html
+<!-- app.vue -->
+  <div id="app">
+    {{ $store.state.a }}
+    {{ $store.getters.a1 }}
+    <button @click="$store.state.a++">
+      增加
+    </button>
+  </div>
+```
+
+![write-router1.gif](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router1.gif)
+
+github切换到`c3`分支

@@ -3,6 +3,16 @@ class Store {
   constructor(options) {
     this.options = options;
     this.state = new Vue({ data: options.state });
+    if (options.getters) {
+      this.getters = {};
+      Object.keys(options.getters).forEach(key => {
+        Object.defineProperty(this.getters, key, {
+          get: () => {
+            return options.getters[key](this.state);
+          }
+        });
+      });
+    }
   }
 }
 export default {
