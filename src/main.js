@@ -7,14 +7,6 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: { a: 1, b: 2 },
-  getters: {
-    a1(state) {
-      return state.a + 1;
-    },
-    b2(state) {
-      return state.b + 2;
-    }
-  },
   mutations: {},
   actions: {},
   modules: {}

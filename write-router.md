@@ -57,21 +57,30 @@ export default {
 
 ![write-router6.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router6.png)
 
-## 实现state
-
-<!-- TODO:prototype需要优化 -->
-
 ## 处理用户传的state
 
-这里一定区分：传的参数`state`和`store`实例中的`state`。
-
-- 参数state，是用户自己写的，`new Vuex.Store({ state: { a: 1, b: 2 } })`,`{ a: 1, b: 2 }`是用户传的参数state。
-- store实例中的state，是对用户的state做过处理的，从而更加方便用户使用，和参数`state`不是对等关系，`this.$store.state`就是处理过的state。
-
 store实例的`state`可以出现在视图里，值变化的时候，视图也一并更新。
-所以，`state`是被监测的，这里投机取巧的用下Vue。
+所以，`state`是被劫持的，这里投机取巧的用下`Vue`。
 
-![write-router5.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router5.png)
+```js
+// vuex.js
+class Store {
+  constructor(options) {
+    this.options = options;
+    this.state = new Vue({ data: options.state });
+  }
+}
+```
+
+```html
+<!-- App.vue -->
+  <div id="app">
+    {{ $store.state.a }}
+    <button @click="$store.state.a++">
+      增加
+    </button>
+  </div>
+```
 
 github切换到`c2`分支
 
