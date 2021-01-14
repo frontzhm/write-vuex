@@ -14,9 +14,16 @@ categories: js
 
 先可以用`vue create xx`创建一个项目，不带`vuex`的。  
 
-先看看，以前如果有`vuex`的`main.js`。
+先看看，如果有`vuex`插件的`main.js`。
 
 ![write-router1.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router1.png)
+
+！！！特别注意
+
+- `{state:{},mutations:...}`，是用户传的参数
+- store虽然可以`this.$store.state`，但这个state不完全是用户传的state，而是处理过的state，这两有本质区别
+- 同样，用户传过来的其他属性，也会做处理，这样才有后期的`this.$store.getters.xx`等等
+- 换言之，`store`就是对用户传的参数做各种处理，以方便用户操作她的数据。
 
 从这推理出`vuex`，应该具有的特征：
 
@@ -29,6 +36,26 @@ categories: js
 第一版`vuex.js`就出来了:
 
 ![write-router2.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router2.png)
+
+但这样，`$store`和`store实例`并没有挂钩，此时可以借助`Vue.mixins的beforeCreate钩子`拿到当前的Vue实例，从而拿到实例的`$options` 。
+
+```js
+export default {
+  install(Vue) {
+    Vue.mixin({
+      beforeCreate() {
+        // 这里的this是vue的实例，其参数store就是store实例
+        (!Vue.prototype.$store) && (Vue.prototype.$store = this.$options.store;)
+      }
+    });
+  },
+  Store
+};
+```
+
+改进：不要轻易在原型上面添加属性，应该只在根实例有`store`的时候才设置`$store`，子实例会拿到根实例的`$store`
+
+![write-router6.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router6.png)
 
 ## 实现state
 

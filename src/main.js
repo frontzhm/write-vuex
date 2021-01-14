@@ -15,10 +15,11 @@ const store = new Vuex.Store({
 Vue.config.productionTip = false;
 
 new Vue({
+  // 这里是一个store的实例
   store,
   mounted() {
     // 测试$store有没有被注入
-    console.log(this.$store);
+    console.log("打印$store", this.$store);
   },
   render: h => h(App)
 }).$mount("#app");
