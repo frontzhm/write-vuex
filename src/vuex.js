@@ -12,7 +12,7 @@ export default {
         // 根实例的store
         hasStore
           ? (this.$store = this.$options.store)
-          : this.$parent && (this.$store = this.$parent.store);
+          : this.$parent && (this.$store = this.$parent.$store);
       }
     });
   },
