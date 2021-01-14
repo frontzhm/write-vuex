@@ -5,6 +5,15 @@ class Store {
     console.log("拿到用户传的state/mutations的参数", options);
     // 让state可以被劫持
     store.state = new Vue({ data: options.state });
+    store.getters = {};
+    console.log(options.getters);
+    Object.keys(options.getters).forEach(key => {
+      console.log(key);
+      const value = options.getters[key](store.state);
+      console.log(value);
+      store.getters[key] = value;
+      console.log(111, store.getters);
+    });
   }
 }
 export default {
