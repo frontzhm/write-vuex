@@ -30,9 +30,27 @@ categories: js
 
 ![write-router2.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router2.png)
 
-## 实现state
+github切换到`c1`分支
 
-state放在模板里，当state变化的时候，模板自动更新。
-显然，state是被劫持的。
-而vue本身就实现了属性劫持。
+<!-- TODO:prototype需要优化 -->
+
+## 处理用户传的state
+
+这里一定区分：传的参数`state`和`store`实例中的`state`。
+
+- 参数state，是用户自己写的，`new Vuex.Store({ state: { a: 1, b: 2 } })`,`{ a: 1, b: 2 }`是用户传的参数state。
+- store实例中的state，是对用户的state做过处理的，从而更加方便用户使用，和参数`state`不是对等关系，`this.$store.state`就是处理过的state。
+
+store实例的`state`可以出现在视图里，值变化的时候，视图也一并更新。
+所以，`state`是被监测的，这里投机取巧的用下Vue。
+
+![write-router5.png](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router5.png)
+
+github切换到`c2`分支
+
+<!-- TODO：state的处理需要优化 -->
+
+## 处理用户传的getters
+
+参数的getters是一个函数，但是实际使用中，则是一个属性。
 
