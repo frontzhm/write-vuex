@@ -20,7 +20,13 @@ const store = new Vuex.Store({
       state.a += num;
     }
   },
-  actions: {},
+  actions: {
+    addA(store, num) {
+      setTimeout(() => {
+        store.commit("addA", num);
+      }, 1000);
+    }
+  },
   modules: {}
 });
 

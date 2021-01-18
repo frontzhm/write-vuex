@@ -16,10 +16,15 @@ class Store {
     if (options.mutations) {
       this.mutations = { ...options.mutations };
     }
+    if (options.actions) {
+      this.actions = { ...options.actions };
+    }
   }
   commit(mutationName, ...payload) {
-    console.log(mutationName, ...payload);
     this.mutations[mutationName](this.state, ...payload);
+  }
+  dispatch(actionName, ...payload) {
+    this.actions[actionName](this, ...payload);
   }
 }
 export default {

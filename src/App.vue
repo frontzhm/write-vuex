@@ -5,6 +5,9 @@
     <button @click="$store.commit('addA', 2)">
       增加
     </button>
+    <button @click="$store.dispatch('addA', 100)">
+      1s后增加100
+    </button>
   </div>
 </template>
 

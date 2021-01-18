@@ -140,23 +140,21 @@ github 切换到`c3`分支
 代码翻译：
 
 ```js
-// 这是参数mutations
-const mutations = {
-  addA(state, num) {
-    state.a += num;
-  },
-};
-// vuex处理之后，可以这样调用mutations
-commit("addA", 1);
+mutations:{
+  addA(state,payload){state.a+=payload}
+}
+// 使用的时候
+this.$store.commit('addA',2)
+
 ```
 
-由此推理出，vuex其实写了一个`commit`方法
+由此推理出，vuex 其实写了一个`commit`方法。这个就很简单了，直接溜上来。
 
 ```js
 // vuex.js
 class Store {
   constructor(options) {
-  //  ...
+    //  ...
     if (options.mutations) {
       this.mutations = { ...options.mutations };
     }
@@ -174,10 +172,67 @@ class Store {
 // <button @click="$store.commit('addA', 2)"> 增加 </button>
 const store = new Vuex.Store({
   state: { a: 1, b: 2 },
-  getters: { a1(state) { return state.a + 1; } },
+  getters: {
+    a1(state) {
+      return state.a + 1;
+    },
+  },
   mutations: {
-    addA(state, num) { state.a += num; }
+    addA(state, num) {
+      state.a += num;
+    },
   },
 });
 ```
+
+github 切换到`c4`分支
+
+<!-- 升级 -->
+
+## 处理 actions
+
+`actions`和`mutations`是很相似的。
+
+```js
+actions:{
+  // 注意！！！，这里的第一个参数是store实例
+  addA({commit},payload){setTimeout(()=>{commit('addA',payload)},1000)}
+}
+// 使用的时候
+this.$store.dispatch('addA',100)
+```
+
+这下更容易了，直接copy
+
+```js
+  commit(mutationName, ...payload) {
+    this.mutations[mutationName](this.state, ...payload);
+  }
+  dispatch(actionName, ...payload) {
+    // 注意这里是this，不是this.state
+    this.actions[actionName](this, ...payload);
+  }
+```
+
+![write-router3.gif](https://blog-huahua.oss-cn-beijing.aliyuncs.com/blog/code/write-router3.gif)
+
+```js
+// <button @click="$store.dispatch('addA', 2)"> 1s后增加100 </button>
+const store = new Vuex.Store({
+  // ...
+  actions: {
+    addA(store, num) {
+      setTimeout(() => {
+        store.commit("addA", num);
+      }, 1000);
+    }
+  },
+});
+```
+
+github 切换到`c5`分支
+
+
+
+
 
