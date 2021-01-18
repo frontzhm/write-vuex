@@ -21,9 +21,9 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    addA(store, num) {
+    addA({ commit }, num) {
       setTimeout(() => {
-        store.commit("addA", num);
+        commit("addA", num);
       }, 1000);
     }
   },

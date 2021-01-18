@@ -14,18 +14,28 @@ class Store {
       });
     }
     if (options.mutations) {
-      this.mutations = { ...options.mutations };
+      this.mutations = {};
+      Object.keys(options.mutations).forEach(mutationName => {
+        this.mutations[mutationName] = (...payload) => {
+          options.mutations[mutationName](...payload);
+        };
+      });
     }
     if (options.actions) {
-      this.actions = { ...options.actions };
+      this.actions = {};
+      Object.keys(options.actions).forEach(actionName => {
+        this.actions[actionName] = (...payload) => {
+          options.actions[actionName](...payload);
+        };
+      });
     }
   }
-  commit(mutationName, ...payload) {
+  commit = (mutationName, ...payload) => {
     this.mutations[mutationName](this.state, ...payload);
-  }
-  dispatch(actionName, ...payload) {
+  };
+  dispatch = (actionName, ...payload) => {
     this.actions[actionName](this, ...payload);
-  }
+  };
 }
 export default {
   install(_Vue) {

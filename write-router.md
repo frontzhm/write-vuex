@@ -232,7 +232,109 @@ const store = new Vuex.Store({
 
 github 切换到`c5`分支
 
+## 优化
 
+- commit做处理的时候，最好用下切片思维，这样方便修改逻辑
+- commit里面的`this`，最好固定执行store实例，因为这样在action那边的时候，可以直接解构赋值
+- action也一样
+
+```js
+// vuex.js
+constructor(options){
+  // ...
+    if (options.mutations) {
+      this.mutations = {};
+      Object.keys(options.mutations).forEach(mutationName => {
+        // 切片思维，这里上下都可以加逻辑
+        this.mutations[mutationName] = (...payload) => {
+          options.mutations[mutationName](...payload);
+        };
+      });
+    }
+}
+// 将this始终执行store实例
+commit = (mutationName, ...payload) => {
+  this.mutations[mutationName](this.state, ...payload);
+}; 
+```
+
+action操作一样，不在赘述代码。
+
+```js
+actions: {
+  addA({commit}, num) {
+    // 这里可以解构了！！！
+    setTimeout(() => {
+      commit("addA", num);
+    }, 1000);
+  }
+},
+```
+
+github 切换到`c6`分支。
+
+还有模块空间的内容，考虑到篇幅较长，就不在本文继续了。
+
+## 附注：vuex.js的所有代码
+
+```js
+let Vue;
+class Store {
+  constructor(options) {
+    this.options = options;
+    this.state = new Vue({ data: options.state });
+    if (options.getters) {
+      this.getters = {};
+      Object.keys(options.getters).forEach(key => {
+        Object.defineProperty(this.getters, key, {
+          get: () => {
+            return options.getters[key](this.state);
+          }
+        });
+      });
+    }
+    if (options.mutations) {
+      this.mutations = {};
+      Object.keys(options.mutations).forEach(mutationName => {
+        this.mutations[mutationName] = (...payload) => {
+          options.mutations[mutationName](...payload);
+        };
+      });
+    }
+    if (options.actions) {
+      this.actions = {};
+      Object.keys(options.actions).forEach(actionName => {
+        this.actions[actionName] = (...payload) => {
+          options.actions[actionName](...payload);
+        };
+      });
+    }
+  }
+  commit = (mutationName, ...payload) => {
+    this.mutations[mutationName](this.state, ...payload);
+  };
+  dispatch = (actionName, ...payload) => {
+    this.actions[actionName](this, ...payload);
+  };
+}
+export default {
+  install(_Vue) {
+    Vue = _Vue;
+    Vue.mixin({
+      beforeCreate() {
+        // 这里的this是vue的实例，其参数store就是store实例
+        const hasStore = this.$options.store;
+        // 根实例的store
+        hasStore
+          ? (this.$store = this.$options.store)
+          : this.$parent && (this.$store = this.$parent.$store);
+      }
+    });
+  },
+  Store
+};
+
+```
 
 
 
