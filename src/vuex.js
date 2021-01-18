@@ -13,6 +13,13 @@ class Store {
         });
       });
     }
+    if (options.mutations) {
+      this.mutations = { ...options.mutations };
+    }
+  }
+  commit(mutationName, ...payload) {
+    console.log(mutationName, ...payload);
+    this.mutations[mutationName](this.state, ...payload);
   }
 }
 export default {

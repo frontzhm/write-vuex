@@ -15,7 +15,11 @@ const store = new Vuex.Store({
       return state.b + 2;
     }
   },
-  mutations: {},
+  mutations: {
+    addA(state, num) {
+      state.a += num;
+    }
+  },
   actions: {},
   modules: {}
 });

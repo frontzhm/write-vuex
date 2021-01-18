@@ -2,7 +2,7 @@
   <div id="app">
     {{ $store.state.a }}
     {{ $store.getters.a1 }}
-    <button @click="$store.state.a++">
+    <button @click="$store.commit('addA', 2)">
       增加
     </button>
   </div>
